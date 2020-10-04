@@ -1,0 +1,93 @@
+name: CI
+
+on:
+  push:
+    # Run in PRs and for bors, but not on master.
+    branches:
+      - 'auto'
+      - 'try'
+  pull_request:
+    branches:
+      - 'master'
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    env:
+      RUST_BACKTRACE: 1
+      HOST_TARGET: ${{ matrix.host_target }}
+    strategy:
+      matrix:
+        build: [linux64]
+        include:
+          - build: linux64
+            os: ubuntu-20.04
+            host_target: x86_64-unknown-linux-gnu
+    steps:
+      - uses: actions/checkout@v2
+
+      # Cache the global cargo directory, but NOT the local `target` directory which
+      # we cannot reuse anyway when the nightly changes (and it grows quite large
+      # over time).
+      - name: Add cache for cargo
+        uses: actions/cache@v2
+        with:
+          path: |
+            # Taken from <https://doc.rust-lang.org/nightly/cargo/guide/cargo-home.html#caching-the-cargo-home-in-ci>.
+            ~/.cargo/bin
+            ~/.cargo/registry/index
+            ~/.cargo/registry/cache
+            ~/.cargo/git/db
+            # contains package information of crates installed via `cargo install`.
+            ~/.cargo/.crates.toml
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo
+
+      - run: cargo fmt -- --check
+
+      - name: LLD
+        run: |
+          # To retrieve the archive signature
+          wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key|sudo apt-key add -
+          sudo add-apt-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-11 main"
+          sudo apt-get update
+          sudo apt-get install -yq lld-11 clang-tools-11
+          echo "RUSTFLAGS=-C link-arg=-fuse-ld=lld-11 -C linker=clang-11" >> $GITHUB_ENV
+
+      - name: Install nightly toolchain
+        run: |
+          rustup toolchain install nightly
+          rustup default nightly
+        shell: bash
+
+      - name: Show Rust version
+        run: |
+          rustup show
+          rustc -Vv
+          cargo -V
+
+      - run: cargo build --all-targets --target ${{ matrix.host_target }}
+      - run: cargo test --all-targets --target ${{ matrix.host_target }}
+      - run: cargo bench --all-targets --target ${{ matrix.host_target }}
+
+  # These jobs doesn't actually test anything, but they're only used to tell
+  # bors the build completed, as there is no practical way to detect when a
+  # workflow is successful listening to webhooks only.
+  #
+  # ALL THE PREVIOUS JOBS NEED TO BE ADDED TO THE `needs` SECTION OF THIS JOB!
+  end-success:
+    name: bors build finished
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: github.event.pusher.name == 'bors' && success()
+    steps:
+      - name: mark the job as a success
+        run: exit 0
+  end-failure:
+    name: bors build finished
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: github.event.pusher.name == 'bors' && (failure() || cancelled())
+    steps:
+      - name: mark the job as a failure
+        run: exit 1
