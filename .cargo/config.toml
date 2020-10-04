@@ -1,0 +1,7 @@
+[build]
+rustflags = [
+    "-Clinker-plugin-lto",
+    "-Clinker=clang",
+    "-Clink-arg=-fuse-ld=lld",
+    "-C", "target-cpu=sandybridge",
+]
