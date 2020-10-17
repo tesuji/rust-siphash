@@ -23,7 +23,6 @@ jobs:
           - build: linux64
             os: ubuntu-latest
             host_target: x86_64-unknown-linux-gnu
-            rust_toolchain
     steps:
       - uses: actions/checkout@v2
 
