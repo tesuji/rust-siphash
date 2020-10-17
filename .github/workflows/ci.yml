@@ -59,8 +59,8 @@ jobs:
 
       - name: LLD
         run: |
-          sudo apt-get search lld
-          sudo apt-get search clang
+          apt search lld
+          apt search clang
           sudo apt-get install -q lld-10 clang-tools-10
 
       - run: cargo build --all-targets --target ${{ matrix.host_target }}
