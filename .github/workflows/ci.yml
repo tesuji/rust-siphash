@@ -43,6 +43,8 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: ${{ runner.os }}-cargo
 
+      - run: cargo fmt -- --check
+
       - name: Install nightly toolchain
         run: |
           rustup toolchain install nightly -c rustfmt
@@ -54,8 +56,6 @@ jobs:
           rustup show
           rustc -Vv
           cargo -V
-
-      - run: cargo fmt -- --check
 
       - run: cargo build --all-targets --target ${{ matrix.host_target }}
       - run: cargo test --all-targets --target ${{ matrix.host_target }}
