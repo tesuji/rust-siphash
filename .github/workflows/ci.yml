@@ -47,7 +47,7 @@ jobs:
 
       - name: Install nightly toolchain
         run: |
-          rustup toolchain install nightly -c rustfmt
+          rustup toolchain install nightly
           rustup default nightly
         shell: bash
 
@@ -61,8 +61,6 @@ jobs:
         run: |
           echo "LD_LIBRARY_PATH=$HOME/.rustup/toolchains/nightly-${{ matrix.host_target }}/lib/" >> $GITHUB_ENV
           echo "$HOME/.rustup/toolchains/nightly-${{ matrix.host_target }}/lib/rustlib/${{ matrix.host_target }}/bin/" >> $GITHUB_PATH
-
-      - run: rust-lld --version
 
       - run: cargo build --all-targets --target ${{ matrix.host_target }}
       - run: cargo test --all-targets --target ${{ matrix.host_target }}
