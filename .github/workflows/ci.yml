@@ -21,7 +21,7 @@ jobs:
         build: [linux64]
         include:
           - build: linux64
-            os: ubuntu-latest
+            os: ubuntu-20.04
             host_target: x86_64-unknown-linux-gnu
     steps:
       - uses: actions/checkout@v2
@@ -47,8 +47,6 @@ jobs:
 
       - name: LLD
         run: |
-          apt search lld
-          apt search clang
           sudo apt-get install -q lld-10 clang-tools-10
 
       - name: Install nightly toolchain
