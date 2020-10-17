@@ -1,7 +1,7 @@
 [build]
 rustflags = [
     "-C", "linker-plugin-lto",
-    "-C", "linker=clang11",
-    "-C", "link-arg=-fuse-ld=lld11",
+    "-C", "linker=clang-11",
+    "-C", "link-arg=-fuse-ld=lld-11",
     "-C", "target-cpu=native",
 ]
