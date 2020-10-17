@@ -52,6 +52,7 @@ jobs:
           sudo add-apt-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-11 main"
           sudo apt-get update
           sudo apt-get install -yq lld-11 clang-tools-11
+          echo "RUSTFLAGS=-C link-arg=-fuse-ld=lld-11 -C linker=clang-11" >> $GITHUB_ENV
 
       - name: Install nightly toolchain
         run: |
