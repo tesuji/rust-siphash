@@ -45,6 +45,12 @@ jobs:
 
       - run: cargo fmt -- --check
 
+      - name: LLD
+        run: |
+          apt search lld
+          apt search clang
+          sudo apt-get install -q lld-10 clang-tools-10
+
       - name: Install nightly toolchain
         run: |
           rustup toolchain install nightly
@@ -56,12 +62,6 @@ jobs:
           rustup show
           rustc -Vv
           cargo -V
-
-      - name: LLD
-        run: |
-          apt search lld
-          apt search clang
-          sudo apt-get install -q lld-10 clang-tools-10
 
       - run: cargo build --all-targets --target ${{ matrix.host_target }}
       - run: cargo test --all-targets --target ${{ matrix.host_target }}
