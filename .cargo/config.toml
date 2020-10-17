@@ -1,7 +1,7 @@
 [build]
 rustflags = [
-    "-Clinker-plugin-lto",
-    "-Clinker=clang",
-    "-Clink-arg=-fuse-ld=rust-lld",
+    "-C", "linker-plugin-lto",
+    "-C", "linker=clang",
+    "-C", "link-arg=-fuse-ld=rust-lld",
     "-C", "target-cpu=sandybridge",
 ]

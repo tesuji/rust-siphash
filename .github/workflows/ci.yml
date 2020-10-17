@@ -57,6 +57,13 @@ jobs:
           rustc -Vv
           cargo -V
 
+      - name: LLD
+        run: |
+          echo "LD_LIBRARY_PATH=$HOME/.rustup/toolchains/nightly-${{ matrix.host_target }}/lib/" >> $GITHUB_ENV
+          echo "$HOME/.rustup/toolchains/nightly-${{ matrix.host_target }}/lib/rustlib/${{ matrix.host_target }}/bin/rust-lld" >> $GITHUB_PATH
+
+      - run: rust-lld --version
+
       - run: cargo build --all-targets --target ${{ matrix.host_target }}
       - run: cargo test --all-targets --target ${{ matrix.host_target }}
       - run: cargo bench --all-targets --target ${{ matrix.host_target }}
