@@ -60,7 +60,7 @@ jobs:
       - name: LLD
         run: |
           echo "LD_LIBRARY_PATH=$HOME/.rustup/toolchains/nightly-${{ matrix.host_target }}/lib/" >> $GITHUB_ENV
-          echo "$HOME/.rustup/toolchains/nightly-${{ matrix.host_target }}/lib/rustlib/${{ matrix.host_target }}/bin/rust-lld" >> $GITHUB_PATH
+          echo "$HOME/.rustup/toolchains/nightly-${{ matrix.host_target }}/lib/rustlib/${{ matrix.host_target }}/bin/" >> $GITHUB_PATH
 
       - run: rust-lld --version
 
