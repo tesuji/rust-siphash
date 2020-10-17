@@ -2,6 +2,6 @@
 rustflags = [
     "-Clinker-plugin-lto",
     "-Clinker=clang",
-    "-Clink-arg=-fuse-ld=lld",
+    "-Clink-arg=-fuse-ld=rust-lld",
     "-C", "target-cpu=sandybridge",
 ]
